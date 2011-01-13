@@ -47,4 +47,13 @@
     <string name="default_subject_for_email_alert">LocalizationShare Alert</string>
     <string name="default_email_emergency_address">neoriddle@gmail.com</string>
     <string name="default_sms_emergency_number">5538274486</string>
+
+    <!-- About dialog  -->
+    <string name="close">Close</string>
+    <string name="send_me_bugs_msg">If you find some error, or you have comments or suggestions, please send me an email.</string>
+    <string name="homepage_msg">Homepage: http://github.com/neoriddle/localization-share</string>
+    <string name="version_msg">Version %s</string>
+    <string name="description_project_msg">LocalizationShare is a project which intents to be a simple application and very customizable to send panic alerts.\nThis project is in progress, so if you have ideas to make grow up, we can include them. We need contributors!</string>
+    <string name="credits_msg">Credits:\nProject Leader:\n\tIsrael Buitron\n\t\tEmail: israel.buitron@gmail.com\n\t\tGPG key: 0x798E944C</string>
+
 </resources>

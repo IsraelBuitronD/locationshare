@@ -37,7 +37,5 @@
     <item
         android:id="@+id/aboutMenu"
         android:title="@string/about"
-        android:icon="@drawable/ic_menu_info_details"
-        android:enabled="false"
-        android:visible="false"/>
+        android:icon="@drawable/ic_menu_info_details"/>
 </menu>

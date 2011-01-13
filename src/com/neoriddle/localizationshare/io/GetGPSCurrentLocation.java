@@ -3,14 +3,17 @@ package com.neoriddle.localizationshare.io;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,10 +21,12 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.neoriddle.localizationshare.R;
+import com.neoriddle.localizationshare.utils.AndroidUtils;
 
 public class GetGPSCurrentLocation extends MapActivity {
 
     private static final int LAST_LOCATION_DETAIL_DIALOG_ID = 0x01;
+    private static final int ABOUT_DIALOG_ID = 0x02;
 
     private MapView mapView;
     private MyLocationOverlay overlay;
@@ -85,8 +90,7 @@ public class GetGPSCurrentLocation extends MapActivity {
             startActivity(new Intent(this, Preferences.class));
             return true;
         case R.id.aboutMenu:
-            Toast.makeText(this, "TODO: Call about dialog", Toast.LENGTH_SHORT).show();
-            // TODO Implement about dialog
+            showDialog(ABOUT_DIALOG_ID);
             return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -130,6 +134,20 @@ public class GetGPSCurrentLocation extends MapActivity {
             accuracyText.setText(getString(R.string.accuracy_value, lastLocation.getAccuracy()));
 
             return dialog;
+        case ABOUT_DIALOG_ID :
+            final LayoutInflater factory = LayoutInflater.from(this);
+            final View aboutView = factory.inflate(R.layout.about_dialog, null);
+
+            final TextView versionLabel = (TextView)aboutView.findViewById(R.id.version_label);
+            versionLabel.setText(getString(R.string.version_msg, AndroidUtils.getAppVersionName(getApplicationContext())));
+
+            return new AlertDialog.Builder(this).
+                setIcon(R.drawable.icon).
+                setTitle(R.string.app_name).
+                setView(aboutView).
+                setPositiveButton(R.string.close, null).
+                create();
+
         default:
             return super.onCreateDialog(id);
         }
