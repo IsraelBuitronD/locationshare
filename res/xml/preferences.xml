@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="Elisa4Android Preferences">
+    <ListPreference
+        android:title="@string/language"
+        android:entryValues="@array/languages"
+        android:summary="@string/select_a_language"
+        android:entries="@array/language_keys"
+        android:key="language"
+        android:selectable="false"
+        android:shouldDisableView="true"
+        android:enabled="false"/>
+
+    <PreferenceScreen
+        android:summary="Customize all preferences about emergency alerts"
+        android:title="Emergency Alerts">
+        <PreferenceCategory
+            android:title="Preferences for SMS Alerts"
+            android:enabled="false"
+            android:selectable="false">
+            <EditTextPreference
+                android:summary="Edit number to send emergency alerts"
+                android:title="SMS emergency number"
+                android:defaultValue="@string/default_sms_emergency_number"
+                android:key="sms_emergency_number"/>
+        </PreferenceCategory>
+
+        <PreferenceCategory
+            android:title="Preferences for Email Alerts">
+            <EditTextPreference
+                android:summary="Edit email address to send emergency alerts"
+                android:title="Email emergency address"
+                android:defaultValue="@string/default_email_emergency_address"
+                android:key="email_emergency_address"/>
+            <EditTextPreference
+                android:summary="@string/edit_email_alert_template"
+                android:dialogTitle="@string/template_for_email"
+                android:title="@string/template_for_email"
+                android:key="template_for_email_alert"
+                android:defaultValue="@string/default_template_for_email_alert"/>
+        </PreferenceCategory>
+    </PreferenceScreen>
+
+    <PreferenceScreen
+        android:summary="Customize option about network and GPS"
+        android:title="Network options"
+        android:selectable="false"
+        android:enabled="false">
+        <CheckBoxPreference
+            android:title="@string/wifi_usage"
+            android:summaryOn="@string/wifi_usage_is_turned_on"
+            android:summaryOff="@string/wifi_usage_is_turned_off"
+            android:key="wifi_usage"/>
+        <CheckBoxPreference
+            android:title="@string/gps_usage"
+            android:summaryOn="@string/gps_usage_is_turned_on"
+            android:summaryOff="@string/gps_usage_is_turned_off"
+            android:key="gps_usage"/>
+    </PreferenceScreen>
+</PreferenceScreen>

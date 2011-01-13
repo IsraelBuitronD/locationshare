@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/refreshMenu"
+        android:title="@string/refresh_location"
+        android:icon="@drawable/ic_menu_refresh"
+        android:enabled="false"
+        android:visible="false"/>
+    <item
+        android:id="@+id/lastLocationDetailMenu"
+        android:title="@string/location_detail"
+        android:icon="@drawable/ic_menu_mylocation"/>
+    <item
+        android:id="@+id/shareLocationMenu"
+        android:title="@string/send_location"
+        android:icon="@drawable/ic_menu_send">
+        <menu>
+            <item
+                android:numericShortcut="1"
+                android:alphabeticShortcut="s"
+                android:id="@+id/sendBySmsMenu"
+                android:title="@string/send_by_sms"
+                android:enabled="false"
+                android:visible="false"/>
+            <item
+                android:numericShortcut="1"
+                android:alphabeticShortcut="e"
+                android:id="@+id/sendByEmailMenu"
+                android:title="@string/send_by_email"/>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/preferencesMenu"
+        android:title="@string/preferences"
+        android:icon="@drawable/ic_menu_preferences"/>
+    <item
+        android:id="@+id/aboutMenu"
+        android:title="@string/about"
+        android:icon="@drawable/ic_menu_info_details"
+        android:enabled="false"
+        android:visible="false"/>
+</menu>

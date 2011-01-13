@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent" android:padding="3px">
+
+    <TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/latitude"></TextView>
+        <TextView
+            android:id="@+id/latitude_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></TextView>
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/longitude"></TextView>
+        <TextView
+            android:id="@+id/longitude_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></TextView>
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bearing"></TextView>
+        <TextView
+            android:id="@+id/bearing_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></TextView>
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/altitude"></TextView>
+        <TextView
+            android:id="@+id/altitude_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></TextView>
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/speed"></TextView>
+        <TextView
+            android:id="@+id/speed_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></TextView>
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/time"></TextView>
+        <TextView
+            android:id="@+id/time_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></TextView>
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/provider"></TextView>
+        <TextView
+            android:id="@+id/provider_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></TextView>
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/accuracy"></TextView>
+        <TextView
+            android:id="@+id/accuracy_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></TextView>
+    </TableRow>
+
+</TableLayout>
