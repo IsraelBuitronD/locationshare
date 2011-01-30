@@ -1,4 +1,4 @@
-package com.neoriddle.localizationshare.utils;
+package com.neoriddle.locationshare.utils;
 
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;

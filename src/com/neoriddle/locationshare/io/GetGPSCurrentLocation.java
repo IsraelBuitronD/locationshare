@@ -1,7 +1,9 @@
-package com.neoriddle.localizationshare.io;
+package com.neoriddle.locationshare.io;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -10,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,8 +23,8 @@ import android.widget.Toast;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
-import com.neoriddle.localizationshare.R;
-import com.neoriddle.localizationshare.utils.AndroidUtils;
+import com.neoriddle.locationshare.R;
+import com.neoriddle.locationshare.utils.AndroidUtils;
 
 public class GetGPSCurrentLocation extends MapActivity {
 
@@ -30,6 +33,52 @@ public class GetGPSCurrentLocation extends MapActivity {
 
     private MapView mapView;
     private MyLocationOverlay overlay;
+    private SharedPreferences activityPreferences;
+    private ActivityPreferenceChangeListener preferenceListener;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.get_gps_current_location);
+        activityPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferenceListener = new ActivityPreferenceChangeListener();
+
+        mapView = (MapView) findViewById(R.id.mapView);
+        overlay = new MyLocationOverlay(this, mapView);
+        mapView.getOverlays().add(overlay);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        activityPreferences.registerOnSharedPreferenceChangeListener(preferenceListener);
+        overlay.enableMyLocation();
+
+        // Read preferences for compass
+        if(activityPreferences.getBoolean("compass_control", false))
+            overlay.enableCompass();
+        else
+            overlay.disableCompass();
+
+        // Read preferences for satellite, traffic and streetview overlay
+        mapView.setSatellite(activityPreferences.getBoolean("satellite_overlay", false));
+        mapView.setTraffic(activityPreferences.getBoolean("traffic_overlay", false));
+        mapView.setStreetView(activityPreferences.getBoolean("streetview_overlay", false));
+
+        // Read preferences for map view controls
+        mapView.setBuiltInZoomControls(activityPreferences.getBoolean("builtin_zoom_controls", false));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        activityPreferences.unregisterOnSharedPreferenceChangeListener(preferenceListener);
+
+        if(overlay.isMyLocationEnabled())
+            overlay.disableMyLocation();
+        if(overlay.isCompassEnabled())
+            overlay.disableCompass();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -60,8 +109,7 @@ public class GetGPSCurrentLocation extends MapActivity {
                 Toast.makeText(this, R.string.last_location_info_not_available,
                         Toast.LENGTH_SHORT).show();
             else {
-                final Intent emailIntent = new Intent(
-                        android.content.Intent.ACTION_SEND);
+                final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
                 final String[] recipients = {
                     "neoriddle@gmail.com"
                 };
@@ -99,43 +147,19 @@ public class GetGPSCurrentLocation extends MapActivity {
 
     @Override
     protected Dialog onCreateDialog(int id) {
-        Dialog dialog;
+        final LayoutInflater factory = LayoutInflater.from(this);
+
         switch (id) {
         case LAST_LOCATION_DETAIL_DIALOG_ID:
-            final Location lastLocation = overlay.getLastFix();
+            final View detailView = factory.inflate(R.layout.show_last_location_detail, null);
 
-            dialog = new Dialog(this);
-            dialog.setContentView(R.layout.show_last_location_detail);
-            dialog.setTitle(R.string.last_location_detail);
-            dialog.setOwnerActivity(this);
+            return new AlertDialog.Builder(this).
+                setTitle(R.string.last_location_detail).
+                setView(detailView).
+                setPositiveButton(R.string.close, null).
+                create();
 
-            final TextView latitudeText = (TextView) dialog.findViewById(R.id.latitude_value);
-            latitudeText.setText(Double.toString(lastLocation.getLatitude()));
-
-            final TextView longitudeText = (TextView) dialog.findViewById(R.id.longitude_value);
-            longitudeText.setText(Double.toString(lastLocation.getLongitude()));
-
-            final TextView bearingText = (TextView) dialog.findViewById(R.id.bearing_value);
-            bearingText.setText(Float.toString(lastLocation.getBearing()));
-
-            final TextView altitudeText = (TextView) dialog.findViewById(R.id.altitude_value);
-            altitudeText.setText(Double.toString(lastLocation.getAltitude()));
-
-            final TextView speedText = (TextView) dialog.findViewById(R.id.speed_value);
-            speedText.setText(getString(R.string.speed_value, lastLocation.getSpeed()));
-
-            final TextView timeText = (TextView) dialog.findViewById(R.id.time_value);
-            timeText.setText(new Date(lastLocation.getTime()).toGMTString());
-
-            final TextView providerText = (TextView) dialog.findViewById(R.id.provider_value);
-            providerText.setText(lastLocation.getProvider());
-
-            final TextView accuracyText = (TextView) dialog.findViewById(R.id.accuracy_value);
-            accuracyText.setText(getString(R.string.accuracy_value, lastLocation.getAccuracy()));
-
-            return dialog;
         case ABOUT_DIALOG_ID :
-            final LayoutInflater factory = LayoutInflater.from(this);
             final View aboutView = factory.inflate(R.layout.about_dialog, null);
 
             final TextView versionLabel = (TextView)aboutView.findViewById(R.id.version_label);
@@ -154,29 +178,43 @@ public class GetGPSCurrentLocation extends MapActivity {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.get_gps_current_location);
+    protected void onPrepareDialog(int id, Dialog dialog) {
+        switch(id) {
+        case LAST_LOCATION_DETAIL_DIALOG_ID:
+            final Location lastLocation = overlay.getLastFix();
 
-        mapView = (MapView) findViewById(R.id.mapView);
-        mapView.setBuiltInZoomControls(true);
-        mapView.setSatellite(true);
-        overlay = new MyLocationOverlay(this, mapView);
-        mapView.getOverlays().add(overlay);
-    }
+            final TextView latitudeText = (TextView)dialog.findViewById(R.id.latitude_value);
+            latitudeText.setText(Double.toString(lastLocation.getLatitude()));
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        overlay.disableMyLocation();
-        overlay.disableCompass();
-    }
+            final TextView longitudeText = (TextView)dialog.findViewById(R.id.longitude_value);
+            longitudeText.setText(Double.toString(lastLocation.getLongitude()));
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        overlay.enableMyLocation();
-        overlay.enableCompass();
+            final TextView bearingText = (TextView) dialog.findViewById(R.id.bearing_value);
+            bearingText.setText(Float.toString(lastLocation.getBearing()));
+
+            final TextView altitudeText = (TextView) dialog.findViewById(R.id.altitude_value);
+            altitudeText.setText(Double.toString(lastLocation.getAltitude()));
+
+            final TextView speedText = (TextView) dialog.findViewById(R.id.speed_value);
+            speedText.setText(getString(R.string.speed_value, lastLocation.getSpeed()));
+
+            final TextView timeText = (TextView) dialog.findViewById(R.id.time_value);
+            final DateFormat df = //DateFormat.getDateInstance(DateFormat.LONG, Locale.US);
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+            final Date date = new Date(lastLocation.getTime());
+            timeText.setText(df.format(date));
+
+            final TextView providerText = (TextView) dialog.findViewById(R.id.provider_value);
+            providerText.setText(lastLocation.getProvider());
+
+            final TextView accuracyText = (TextView) dialog.findViewById(R.id.accuracy_value);
+            accuracyText.setText(getString(R.string.accuracy_value, lastLocation.getAccuracy()));
+
+            break;
+
+        default:
+            super.onPrepareDialog(id, dialog);
+        }
     }
 
     @Override
@@ -184,4 +222,10 @@ public class GetGPSCurrentLocation extends MapActivity {
         return false;
     }
 
+    private class ActivityPreferenceChangeListener implements SharedPreferences.OnSharedPreferenceChangeListener {
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            // TODO Implement preferences listener
+            //Toast.makeText(getParent(), "pref=" + sharedPreferences.toString() + "\nkey=" + key, Toast.LENGTH_SHORT).show();
+        }
+    }
 }

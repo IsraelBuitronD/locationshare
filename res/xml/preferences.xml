@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:title="Elisa4Android Preferences">
+    android:title="LocationShare Preferences">
     <ListPreference
         android:title="@string/language"
         android:entryValues="@array/languages"
@@ -9,8 +9,7 @@
         android:entries="@array/language_keys"
         android:key="language"
         android:selectable="false"
-        android:shouldDisableView="true"
-        android:enabled="false"/>
+        android:enabled="false" />
 
     <PreferenceScreen
         android:summary="Customize all preferences about emergency alerts"
@@ -23,7 +22,7 @@
                 android:summary="Edit number to send emergency alerts"
                 android:title="SMS emergency number"
                 android:defaultValue="@string/default_sms_emergency_number"
-                android:key="sms_emergency_number"/>
+                android:key="sms_emergency_number" />
         </PreferenceCategory>
 
         <PreferenceCategory
@@ -32,13 +31,13 @@
                 android:summary="Edit email address to send emergency alerts"
                 android:title="Email emergency address"
                 android:defaultValue="@string/default_email_emergency_address"
-                android:key="email_emergency_address"/>
+                android:key="email_emergency_address" />
             <EditTextPreference
                 android:summary="@string/edit_email_alert_template"
                 android:dialogTitle="@string/template_for_email"
                 android:title="@string/template_for_email"
                 android:key="template_for_email_alert"
-                android:defaultValue="@string/default_template_for_email_alert"/>
+                android:defaultValue="@string/default_template_for_email_alert" />
         </PreferenceCategory>
     </PreferenceScreen>
 
@@ -51,11 +50,53 @@
             android:title="@string/wifi_usage"
             android:summaryOn="@string/wifi_usage_is_turned_on"
             android:summaryOff="@string/wifi_usage_is_turned_off"
-            android:key="wifi_usage"/>
+            android:key="wifi_usage" />
         <CheckBoxPreference
             android:title="@string/gps_usage"
             android:summaryOn="@string/gps_usage_is_turned_on"
             android:summaryOff="@string/gps_usage_is_turned_off"
-            android:key="gps_usage"/>
+            android:key="gps_usage" />
+    </PreferenceScreen>
+
+    <PreferenceScreen
+        android:title="@string/mapview"
+        android:summary="@string/customize_map_view_options">
+        <PreferenceCategory
+            android:title="@string/overlay_in_map">
+            <CheckBoxPreference
+                android:title="@string/satellite_overlay"
+                android:summaryOff="@string/satellite_overlay_is_turned_off"
+                android:summaryOn="@string/satellite_overlay_is_turned_on"
+                android:key="satellite_overlay"
+                android:defaultValue="false" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:summaryOff="@string/traffic_overlay_is_turned_off"
+                android:title="@string/traffic_overlay"
+                android:summaryOn="@string/traffic_overlay_is_turned_on"
+                android:key="traffic_overlay" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:summaryOff="@string/streetview_overlay_is_turned_off"
+                android:title="@string/streetview_overlay"
+                android:summaryOn="@string/streetview_overlay_is_turned_on"
+                android:key="streetview_overlay" />
+        </PreferenceCategory>
+        <PreferenceCategory
+            android:title="@string/controls_in_map">
+            <CheckBoxPreference
+                android:summaryOff="@string/builtin_zoom_controls_are_turned_off"
+                android:title="@string/builtin_zoom_controls"
+                android:key="builtin_zoom_controls"
+                android:summaryOn="@string/builtin_zoom_controls_are_turned_on"
+                android:persistent="true"
+                android:defaultValue="true"/>
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:summaryOff="@string/compass_control_is_turned_off"
+                android:title="@string/compass_control"
+                android:key="compass_control"
+                android:summaryOn="@string/compass_control_is_turned_on" />
+        </PreferenceCategory>
     </PreferenceScreen>
 </PreferenceScreen>

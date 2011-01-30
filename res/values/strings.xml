@@ -3,14 +3,6 @@
     <string name="about">About</string>
     <string name="edit_email_alert_template">Edit email alert template</string>
     <string name="template_for_email">Template for email</string>
-    <string name="gps_usage">GPS usage</string>
-    <string name="select_a_language">Select a language</string>
-    <string name="wifi_usage_is_turned_off">Wifi usage is turned off</string>
-    <string name="wifi_usage_is_turned_on">Wifi usage is turned on</string>
-    <string name="gps_usage_is_turned_off">GPS usage is turned off</string>
-    <string name="gps_usage_is_turned_on">GPS usage is turned on</string>
-    <string name="wifi_usage">Wifi usage</string>
-    <string name="language">Language</string>
     <string name="send_by_email">Send by email</string>
     <string name="send_by_sms">Send by SMS</string>
     <string name="refreshLocation">Refresh location</string>
@@ -34,15 +26,6 @@
     <string name="gmaps_api_key">009e3kABy5qHLyxb1O3fb7gOlrxtaxV2A6UEQWg</string>
     <string name="send_location">Send location</string>
     <string name="last_location_info_not_available">Last location info not available</string>
-    <string-array name="languages">
-        <item>English</item>
-        <item>Spanish</item>
-    </string-array>
-    <string name="preferences">Preferences</string>
-    <string-array name="language_keys">
-        <item>en</item>
-        <item>es</item>
-    </string-array>
     <string name="default_template_for_email_alert">lat=%1$.3f&amp;lng=%2$.3f&amp;acc=%3$.2f&amp;speed=%4$.2f&amp;time=%5$s</string>
     <string name="default_subject_for_email_alert">LocalizationShare Alert</string>
     <string name="default_email_emergency_address">neoriddle@gmail.com</string>
@@ -55,5 +38,43 @@
     <string name="version_msg">Version %s</string>
     <string name="description_project_msg">LocalizationShare is a project which intents to be a simple application and very customizable to send panic alerts.\nThis project is in progress, so if you have ideas to make grow up, we can include them. We need contributors!</string>
     <string name="credits_msg">Credits:\nProject Leader:\n\tIsrael Buitron\n\t\tEmail: israel.buitron@gmail.com\n\t\tGPG key: 0x798E944C</string>
+    
+    <!-- Preferences -->
+    <string name="language">Language</string>
+    <string name="preferences">Preferences</string>
+    <string name="select_a_language">Select a language</string>
+    <string-array name="language_keys">
+        <item>en</item>
+        <item>es</item>
+    </string-array>
+    <string-array name="languages">
+        <item>English</item>
+        <item>Spanish</item>
+    </string-array>
+    <string name="wifi_usage">Wifi usage</string>
+    <string name="wifi_usage_is_turned_off">Wifi usage is turned off</string>
+    <string name="wifi_usage_is_turned_on">Wifi usage is turned on</string>
+    <string name="gps_usage">GPS usage</string>
+    <string name="gps_usage_is_turned_off">Wifi usage is turned off</string>
+    <string name="gps_usage_is_turned_on">Wifi usage is turned on</string>
+    <string name="mapview">MapView</string>
+    <string name="customize_map_view_options">Customize map view options</string>
+    <string name="overlay_in_map">Overlays in map</string>
+    <string name="satellite_overlay">Satellite overlay</string>
+    <string name="satellite_overlay_is_turned_off">Satellite overlay is turned off</string>
+    <string name="satellite_overlay_is_turned_on">Satellite overlay is turned on</string>
+    <string name="traffic_overlay">Traffic overlay</string>
+    <string name="traffic_overlay_is_turned_off">Traffic overlay is turned off</string>
+    <string name="traffic_overlay_is_turned_on">Traffic overlay is turned on</string>
+    <string name="streetview_overlay">StreetView overlay</string>
+    <string name="streetview_overlay_is_turned_off">StreetView overlay is turned off</string>
+    <string name="streetview_overlay_is_turned_on">StreetView overlay is turned on</string>
+    <string name="controls_in_map">Controls in map</string>
+    <string name="builtin_zoom_controls">Built-in zoom controls</string>
+    <string name="builtin_zoom_controls_are_turned_off">Built-in zoom controls are turned off</string>
+    <string name="builtin_zoom_controls_are_turned_on">Built-in zoom controls are turned on</string>
+    <string name="compass_control">Compass control</string>
+    <string name="compass_control_is_turned_off">Compass control is turned off</string>
+    <string name="compass_control_is_turned_on">Compass control is turned on</string>
 
 </resources>
