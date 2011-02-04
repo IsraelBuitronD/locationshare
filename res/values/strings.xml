@@ -4,6 +4,7 @@
     <string name="edit_email_alert_template">Edit email alert template</string>
     <string name="template_for_email">Template for email</string>
     <string name="send_by_email">Send by email</string>
+    <string name="send_by_https">Send by Https</string>
     <string name="send_by_sms">Send by SMS</string>
     <string name="refreshLocation">Refresh location</string>
     <string name="app_name">LocalizationShare</string>

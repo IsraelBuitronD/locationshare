@@ -18,7 +18,7 @@
         <menu>
             <item
                 android:numericShortcut="1"
-                android:alphabeticShortcut="s"
+                android:alphabeticShortcut="m"
                 android:id="@+id/sendBySmsMenu"
                 android:title="@string/send_by_sms"
                 android:enabled="false"
@@ -28,6 +28,11 @@
                 android:alphabeticShortcut="e"
                 android:id="@+id/sendByEmailMenu"
                 android:title="@string/send_by_email"/>
+            <item
+                android:numericShortcut="1"
+                android:alphabeticShortcut="s"
+                android:id="@+id/sendByHttpsMenu"
+                android:title="@string/send_by_https"/>
         </menu>
     </item>
     <item

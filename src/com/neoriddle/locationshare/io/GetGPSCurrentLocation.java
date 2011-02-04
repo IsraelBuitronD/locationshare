@@ -28,6 +28,12 @@ import com.neoriddle.locationshare.utils.AndroidUtils;
 
 public class GetGPSCurrentLocation extends MapActivity {
 
+    /**
+     * Tag class por debugging.
+     */
+    @SuppressWarnings("unused")
+    private static final String DEBUG_TAG = "GetGPSCurrentLocation";
+
     private static final int LAST_LOCATION_DETAIL_DIALOG_ID = 0x01;
     private static final int ABOUT_DIALOG_ID = 0x02;
 
@@ -100,39 +106,13 @@ public class GetGPSCurrentLocation extends MapActivity {
                 showDialog(LAST_LOCATION_DETAIL_DIALOG_ID);
             return true;
         case R.id.sendBySmsMenu:
-            Toast.makeText(this, "TODO: Send location by SMS", Toast.LENGTH_SHORT).show();
-            // TODO Send location by SMS
+            sendBySms();
             return true;
         case R.id.sendByEmailMenu:
-            final Location lastLocation = overlay.getLastFix();
-            if (lastLocation == null)
-                Toast.makeText(this, R.string.last_location_info_not_available,
-                        Toast.LENGTH_SHORT).show();
-            else {
-                final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-                final String[] recipients = {
-                    "neoriddle@gmail.com"
-                };
-
-                final SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
-                final String subject = preferences.getString("default_subject_for_email_alert",
-                        getString(R.string.default_subject_for_email_alert));
-                final String message = preferences.getString(
-                        "default_template_for_email_alert",
-                        getString(R.string.default_template_for_email_alert,
-                                lastLocation.getLatitude(),
-                                lastLocation.getLongitude(),
-                                lastLocation.getAccuracy(),
-                                lastLocation.getSpeed(),
-                                new SimpleDateFormat("yyyyMMdd_HHmmss_ZZZZ").format(new Date(lastLocation.getTime()))));
-
-                emailIntent.setType("plain/text");
-                emailIntent.putExtra(Intent.EXTRA_EMAIL, recipients);
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
-                emailIntent.putExtra(Intent.EXTRA_TEXT, message);
-
-                startActivity(emailIntent);
-            }
+            sendByEmail();
+            return true;
+        case R.id.sendByHttpsMenu:
+            sendByHttps();
             return true;
         case R.id.preferencesMenu:
             startActivity(new Intent(this, Preferences.class));
@@ -220,6 +200,47 @@ public class GetGPSCurrentLocation extends MapActivity {
     @Override
     protected boolean isRouteDisplayed() {
         return false;
+    }
+
+    protected void sendBySms() {
+        Toast.makeText(this, "TODO: Send location by SMS", Toast.LENGTH_SHORT).show();
+        // TODO Send location by SMS
+    }
+
+    protected void sendByHttps() {
+        Toast.makeText(this, "TODO: Send location by HTTPS", Toast.LENGTH_SHORT).show();
+        // TODO Send location by HTTPS
+    }
+
+    protected void sendByEmail() {
+        final Location lastLocation = overlay.getLastFix();
+        if (lastLocation == null)
+            Toast.makeText(this, R.string.last_location_info_not_available, Toast.LENGTH_SHORT).show();
+        else {
+            final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+            final String[] recipients = {
+                "locationshare4a@gmail.com"
+            };
+
+            final SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
+            final String subject = preferences.getString("default_subject_for_email_alert",
+                    getString(R.string.default_subject_for_email_alert));
+            final String message = preferences.getString(
+                    "default_template_for_email_alert",
+                    getString(R.string.default_template_for_email_alert,
+                            lastLocation.getLatitude(),
+                            lastLocation.getLongitude(),
+                            lastLocation.getAccuracy(),
+                            lastLocation.getSpeed(),
+                            new SimpleDateFormat("yyyyMMdd_HHmmss_ZZZZ").format(new Date(lastLocation.getTime()))));
+
+            emailIntent.setType("plain/text");
+            emailIntent.putExtra(Intent.EXTRA_EMAIL, recipients);
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+            emailIntent.putExtra(Intent.EXTRA_TEXT, message);
+
+            startActivity(emailIntent);
+        }
     }
 
     private class ActivityPreferenceChangeListener implements SharedPreferences.OnSharedPreferenceChangeListener {
