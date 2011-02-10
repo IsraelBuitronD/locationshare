@@ -220,8 +220,18 @@ public class GetGPSCurrentLocation extends MapActivity {
     }
 
     protected void sendBySms() {
-        Toast.makeText(this, "TODO: Send location by SMS", Toast.LENGTH_SHORT).show();
-        // TODO Send location by SMS
+        final Location lastLocation = overlay.getLastFix();
+
+        if (lastLocation == null)
+            Toast.makeText(this, R.string.last_location_info_not_available, Toast.LENGTH_SHORT).show();
+        else {
+            final SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
+
+            final Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+            sendIntent.putExtra("sms_body", prepateEmailMessage(preferences, lastLocation));
+            sendIntent.setType("vnd.android-dir/mms-sms");
+            startActivity(sendIntent);
+        }
     }
 
     protected void sendByHttps()
