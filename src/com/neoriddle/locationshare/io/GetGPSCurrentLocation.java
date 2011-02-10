@@ -1,9 +1,24 @@
 package com.neoriddle.locationshare.io;
 
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -13,6 +28,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +40,7 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.neoriddle.locationshare.R;
+import com.neoriddle.locationshare.security.GenericHttpsClient;
 import com.neoriddle.locationshare.utils.AndroidUtils;
 
 public class GetGPSCurrentLocation extends MapActivity {
@@ -40,14 +57,12 @@ public class GetGPSCurrentLocation extends MapActivity {
     private MapView mapView;
     private MyLocationOverlay overlay;
     private SharedPreferences activityPreferences;
-    private ActivityPreferenceChangeListener preferenceListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.get_gps_current_location);
         activityPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        preferenceListener = new ActivityPreferenceChangeListener();
 
         mapView = (MapView) findViewById(R.id.mapView);
         overlay = new MyLocationOverlay(this, mapView);
@@ -57,7 +72,6 @@ public class GetGPSCurrentLocation extends MapActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        activityPreferences.registerOnSharedPreferenceChangeListener(preferenceListener);
         overlay.enableMyLocation();
 
         // Read preferences for compass
@@ -78,8 +92,6 @@ public class GetGPSCurrentLocation extends MapActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        activityPreferences.unregisterOnSharedPreferenceChangeListener(preferenceListener);
-
         if(overlay.isMyLocationEnabled())
             overlay.disableMyLocation();
         if(overlay.isCompassEnabled())
@@ -97,7 +109,7 @@ public class GetGPSCurrentLocation extends MapActivity {
         switch (item.getItemId()) {
         case R.id.refreshMenu:
             Toast.makeText(this, "TODO: Call refresh", Toast.LENGTH_SHORT).show();
-            // TODO Implement refresshing location
+            // TODO Implement refreshing location
             return true;
         case R.id.lastLocationDetailMenu:
             if (overlay.getLastFix() == null)
@@ -112,7 +124,13 @@ public class GetGPSCurrentLocation extends MapActivity {
             sendByEmail();
             return true;
         case R.id.sendByHttpsMenu:
-            sendByHttps();
+            try {
+                sendByHttps();
+            } catch(final Exception e) {
+                // FIXME Fix this try-catch
+                Log.e(DEBUG_TAG, e.getMessage(), e);
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
             return true;
         case R.id.preferencesMenu:
             startActivity(new Intent(this, Preferences.class));
@@ -179,8 +197,7 @@ public class GetGPSCurrentLocation extends MapActivity {
             speedText.setText(getString(R.string.speed_value, lastLocation.getSpeed()));
 
             final TextView timeText = (TextView) dialog.findViewById(R.id.time_value);
-            final DateFormat df = //DateFormat.getDateInstance(DateFormat.LONG, Locale.US);
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+            final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
             final Date date = new Date(lastLocation.getTime());
             timeText.setText(df.format(date));
 
@@ -207,9 +224,27 @@ public class GetGPSCurrentLocation extends MapActivity {
         // TODO Send location by SMS
     }
 
-    protected void sendByHttps() {
-        Toast.makeText(this, "TODO: Send location by HTTPS", Toast.LENGTH_SHORT).show();
+    protected void sendByHttps()
+        throws IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, CertificateException {
         // TODO Send location by HTTPS
+
+        Log.d(DEBUG_TAG, "Creating HTTPS client");
+        final DefaultHttpClient client = new GenericHttpsClient(getApplicationContext());
+
+        final HttpPost httppost = new HttpPost("https://myserver/locationshare.php");
+        //final HttpPost httppost = new HttpPost("https://201.153.203.204/locationshare.php");
+        //final HttpPost httppost = new HttpPost("https://172.16.214.97/locationshare.php");
+
+        Log.d(DEBUG_TAG, "Adding POST parameters");
+        final List<NameValuePair> parameters = new ArrayList<NameValuePair>(2);
+        parameters.add(new BasicNameValuePair("foo", "bar"));
+        httppost.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
+
+        Log.d(DEBUG_TAG, "Executing POST request");
+        final String response = client.execute(httppost, new BasicResponseHandler());
+
+        Log.d(DEBUG_TAG, "POST response\n" + response);
+
     }
 
     protected void sendByEmail() {
@@ -225,28 +260,25 @@ public class GetGPSCurrentLocation extends MapActivity {
             final SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
             final String subject = preferences.getString("default_subject_for_email_alert",
                     getString(R.string.default_subject_for_email_alert));
-            final String message = preferences.getString(
-                    "default_template_for_email_alert",
-                    getString(R.string.default_template_for_email_alert,
-                            lastLocation.getLatitude(),
-                            lastLocation.getLongitude(),
-                            lastLocation.getAccuracy(),
-                            lastLocation.getSpeed(),
-                            new SimpleDateFormat("yyyyMMdd_HHmmss_ZZZZ").format(new Date(lastLocation.getTime()))));
 
             emailIntent.setType("plain/text");
             emailIntent.putExtra(Intent.EXTRA_EMAIL, recipients);
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
-            emailIntent.putExtra(Intent.EXTRA_TEXT, message);
+            emailIntent.putExtra(Intent.EXTRA_TEXT, prepateEmailMessage(preferences, lastLocation));
 
             startActivity(emailIntent);
         }
     }
 
-    private class ActivityPreferenceChangeListener implements SharedPreferences.OnSharedPreferenceChangeListener {
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            // TODO Implement preferences listener
-            //Toast.makeText(getParent(), "pref=" + sharedPreferences.toString() + "\nkey=" + key, Toast.LENGTH_SHORT).show();
-        }
+    protected String prepateEmailMessage(SharedPreferences preferences, Location lastLocation) {
+        return preferences.getString(
+                "default_template_for_email_alert",
+                getString(R.string.default_template_for_email_alert,
+                        lastLocation.getLatitude(),
+                        lastLocation.getLongitude(),
+                        lastLocation.getAccuracy(),
+                        lastLocation.getSpeed(),
+                        new SimpleDateFormat("yyyyMMdd_HHmmss_ZZZZ").format(new Date(lastLocation.getTime()))));
     }
+
 }

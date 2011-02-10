@@ -20,9 +20,7 @@
                 android:numericShortcut="1"
                 android:alphabeticShortcut="m"
                 android:id="@+id/sendBySmsMenu"
-                android:title="@string/send_by_sms"
-                android:enabled="false"
-                android:visible="false"/>
+                android:title="@string/send_by_sms"/>
             <item
                 android:numericShortcut="1"
                 android:alphabeticShortcut="e"
