@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="LocationShare Preferences">
@@ -45,6 +46,12 @@
                 android:title="Email emergency address"
                 android:defaultValue="@string/default_email_emergency_address"
                 android:key="email_emergency_address" />
+            <CheckBoxPreference 
+                android:key="ask_for_email_address"
+                android:title="Ask for email address"
+                android:defaultValue="false"
+                android:summaryOff="Email address will not be prompted"
+                android:summaryOn="Email address will be prompted"/>
             <EditTextPreference
                 android:summary="@string/edit_email_alert_template"
                 android:dialogTitle="@string/template_for_email"
