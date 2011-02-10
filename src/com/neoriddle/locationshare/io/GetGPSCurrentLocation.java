@@ -225,12 +225,16 @@ public class GetGPSCurrentLocation extends MapActivity {
         if (lastLocation == null)
             Toast.makeText(this, R.string.last_location_info_not_available, Toast.LENGTH_SHORT).show();
         else {
-            final SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
+            final boolean askForSMS = activityPreferences.getBoolean("ask_for_sms_number", false);
 
-            final Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-            sendIntent.putExtra("sms_body", prepateEmailMessage(preferences, lastLocation));
-            sendIntent.setType("vnd.android-dir/mms-sms");
-            startActivity(sendIntent);
+            if(askForSMS) {
+                final Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                sendIntent.putExtra("sms_body", prepateEmailMessage(activityPreferences, lastLocation));
+                sendIntent.setType("vnd.android-dir/mms-sms");
+                startActivity(sendIntent);
+            } else
+                // TODO Send sms to default number
+                Toast.makeText(this, "TODO: Send sms to default number", Toast.LENGTH_SHORT).show();
         }
     }
 
