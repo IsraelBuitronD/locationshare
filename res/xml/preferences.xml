@@ -15,14 +15,18 @@
         android:summary="Customize all preferences about emergency alerts"
         android:title="Emergency Alerts">
         <PreferenceCategory
-            android:title="Preferences for SMS Alerts"
-            android:enabled="false"
-            android:selectable="false">
+            android:title="Preferences for SMS Alerts">
             <EditTextPreference
                 android:summary="Edit number to send emergency alerts"
                 android:title="SMS emergency number"
                 android:defaultValue="@string/default_sms_emergency_number"
                 android:key="sms_emergency_number" />
+            <CheckBoxPreference 
+                android:key="ask_for_sms_number"
+                android:title="Ask for SMS number"
+                android:defaultValue="false"
+                android:summaryOff="SMS number will not be prompted"
+                android:summaryOn="SMS number will be prompted"/>
         </PreferenceCategory>
 
         <PreferenceCategory
