@@ -22,12 +22,14 @@ import org.apache.http.protocol.HTTP;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -226,15 +228,20 @@ public class GetGPSCurrentLocation extends MapActivity {
             Toast.makeText(this, R.string.last_location_info_not_available, Toast.LENGTH_SHORT).show();
         else {
             final boolean askForSMS = activityPreferences.getBoolean("ask_for_sms_number", false);
+            final String smsMessage = prepateEmailMessage(activityPreferences, lastLocation);
 
             if(askForSMS) {
                 final Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                sendIntent.putExtra("sms_body", prepateEmailMessage(activityPreferences, lastLocation));
+                sendIntent.putExtra("sms_body", smsMessage);
                 sendIntent.setType("vnd.android-dir/mms-sms");
                 startActivity(sendIntent);
-            } else
-                // TODO Send sms to default number
-                Toast.makeText(this, "TODO: Send sms to default number", Toast.LENGTH_SHORT).show();
+            } else {
+                final String smsNumber = activityPreferences.getString("sms_emergency_number", "");
+                final SmsManager manager = SmsManager.getDefault();
+                final PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, GetGPSCurrentLocation.class), 0);
+                // TODO Check if send sms works (COST NEEDED)
+                manager.sendTextMessage(smsNumber, null, smsMessage, pi, null);
+            }
         }
     }
 
