@@ -44,7 +44,6 @@
             <EditTextPreference
                 android:summary="Edit email address to send emergency alerts"
                 android:title="Email emergency address"
-                android:defaultValue="@string/default_email_emergency_address"
                 android:key="email_emergency_address" />
             <CheckBoxPreference 
                 android:key="ask_for_email_address"

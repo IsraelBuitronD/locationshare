@@ -23,6 +23,7 @@ import org.apache.http.protocol.HTTP;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -277,21 +278,24 @@ public class GetGPSCurrentLocation extends MapActivity {
         if (lastLocation == null)
             Toast.makeText(this, R.string.last_location_info_not_available, Toast.LENGTH_SHORT).show();
         else {
-            final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-            final String[] recipients = {
-                "locationshare4a@gmail.com"
-            };
+            final boolean askForEmail = activityPreferences.getBoolean("ask_for_email_address", false);
 
-            final SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
-            final String subject = preferences.getString("default_subject_for_email_alert",
-                    getString(R.string.default_subject_for_email_alert));
+            if(askForEmail) {
+                final Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                final String email = activityPreferences.getString("email_emergency_address", "locationshare4a@gmail.com");
+                final String[] recipients = {email};
+                final String subject = activityPreferences.getString("default_subject_for_email_alert", getString(R.string.default_subject_for_email_alert));
 
-            emailIntent.setType("plain/text");
-            emailIntent.putExtra(Intent.EXTRA_EMAIL, recipients);
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
-            emailIntent.putExtra(Intent.EXTRA_TEXT, prepateEmailMessage(preferences, lastLocation));
+                emailIntent.setType("plain/text");
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, recipients);
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+                emailIntent.putExtra(Intent.EXTRA_TEXT, prepateEmailMessage(activityPreferences, lastLocation));
 
-            startActivity(emailIntent);
+                startActivity(emailIntent);
+            } else
+                Toast.makeText(this, "TODO: Send email to deafult email address", Toast.LENGTH_SHORT).show();
+                // TODO Send email to deafult email address
+
         }
     }
 

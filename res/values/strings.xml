@@ -28,8 +28,7 @@
     <string name="send_location">Send location</string>
     <string name="last_location_info_not_available">Last location info not available</string>
     <string name="default_template_for_email_alert">lat=%1$.3f&amp;lng=%2$.3f&amp;acc=%3$.2f&amp;speed=%4$.2f&amp;time=%5$s</string>
-    <string name="default_subject_for_email_alert">LocalizationShare Alert</string>
-    <string name="default_email_emergency_address">neoriddle@gmail.com</string>
+    <string name="default_subject_for_email_alert">LocationShare Alert</string>
     <string name="default_sms_emergency_number">5538274486</string>
 
     <!-- About dialog  -->
