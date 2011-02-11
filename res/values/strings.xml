@@ -7,8 +7,8 @@
     <string name="send_by_https">Send by HTTPS</string>
     <string name="send_by_sms">Send by SMS</string>
     <string name="refreshLocation">Refresh location</string>
-    <string name="app_name">LocalizationShare</string>
-    <string name="welcome_title">Welcome to LocalizationShare</string>
+    <string name="app_name">LocationShare</string>
+    <string name="welcome_title">Welcome to LocationShare</string>
     <string name="sendalert_title">Send Alert</string>
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
@@ -34,9 +34,9 @@
     <!-- About dialog  -->
     <string name="close">Close</string>
     <string name="send_me_bugs_msg">If you find some error, or you have comments or suggestions, please send me an email.</string>
-    <string name="homepage_msg">Homepage: http://github.com/neoriddle/localization-share</string>
+    <string name="homepage_msg">Homepage: http://github.com/neoriddle/locationshare</string>
     <string name="version_msg">Version %s</string>
-    <string name="description_project_msg">LocalizationShare is a project which intents to be a simple application and very customizable to send panic alerts.\nThis project is in progress, so if you have ideas to make grow up, we can include them. We need contributors!</string>
+    <string name="description_project_msg">LocationShare is a project which intents to be a simple application and very customizable to send panic alerts.\nThis project is in progress, so if you have ideas to make grow up, we can include them. We need contributors!</string>
     <string name="credits_msg">Credits:\nProject Leader:\n\tIsrael Buitron\n\t\tEmail: israel.buitron@gmail.com\n\t\tGPG key: 0x798E944C</string>
     
     <!-- Preferences -->
