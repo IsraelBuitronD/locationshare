@@ -14,6 +14,15 @@
     <PreferenceScreen
         android:summary="Customize all preferences about emergency alerts"
         android:title="Emergency Alerts">
+
+        <PreferenceCategory
+            android:title="Preferences for HTTPS Alerts">
+            <EditTextPreference
+                android:summary="Edit resource emergency url to send alerts"
+                android:title="Resource emergency url"
+                android:key="https_emergency_url" />
+        </PreferenceCategory>
+
         <PreferenceCategory
             android:title="Preferences for SMS Alerts">
             <EditTextPreference
