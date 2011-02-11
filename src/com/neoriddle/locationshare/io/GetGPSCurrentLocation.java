@@ -50,7 +50,6 @@ public class GetGPSCurrentLocation extends MapActivity {
     /**
      * Tag class por debugging.
      */
-    @SuppressWarnings("unused")
     private static final String DEBUG_TAG = "GetGPSCurrentLocation";
 
     private static final int LAST_LOCATION_DETAIL_DIALOG_ID = 0x01;
@@ -247,24 +246,29 @@ public class GetGPSCurrentLocation extends MapActivity {
 
     protected void sendByHttps()
         throws IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, CertificateException {
-        // TODO Send location by HTTPS
 
         Log.d(DEBUG_TAG, "Creating HTTPS client");
         final DefaultHttpClient client = new GenericHttpsClient(getApplicationContext());
-
-        final HttpPost httppost = new HttpPost("https://myserver/locationshare.php");
-        //final HttpPost httppost = new HttpPost("https://201.153.203.204/locationshare.php");
-        //final HttpPost httppost = new HttpPost("https://172.16.214.97/locationshare.php");
+        final String httpsResource = activityPreferences.getString("https_emergency_url", "");
+        final HttpPost httppost = new HttpPost(httpsResource);
 
         Log.d(DEBUG_TAG, "Adding POST parameters");
+        final Location lastLocation = overlay.getLastFix();
         final List<NameValuePair> parameters = new ArrayList<NameValuePair>(2);
-        parameters.add(new BasicNameValuePair("foo", "bar"));
+
+        parameters.add(new BasicNameValuePair("lat", ""+lastLocation.getLatitude() ));
+        parameters.add(new BasicNameValuePair("lng", ""+lastLocation.getLongitude() ));
+        parameters.add(new BasicNameValuePair("acc", ""+lastLocation.getAccuracy() ));
+        parameters.add(new BasicNameValuePair("speed", ""+lastLocation.getSpeed() ));
+        parameters.add(new BasicNameValuePair("time", new SimpleDateFormat("yyyyMMdd_HHmmss_ZZZZ").format(new Date(lastLocation.getTime())) ));
+
         httppost.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
 
         Log.d(DEBUG_TAG, "Executing POST request");
         final String response = client.execute(httppost, new BasicResponseHandler());
 
         Log.d(DEBUG_TAG, "POST response\n" + response);
+        Toast.makeText(this, response, Toast.LENGTH_SHORT).show();
 
     }
 
