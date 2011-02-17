@@ -23,12 +23,12 @@ import org.apache.http.protocol.HTTP;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.telephony.SmsManager;
 import android.util.Log;
@@ -59,11 +59,15 @@ public class GetGPSCurrentLocation extends MapActivity {
     private MapView mapView;
     private MyLocationOverlay overlay;
     private SharedPreferences activityPreferences;
+    private PowerManager pm;
+    private PowerManager.WakeLock wl;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.get_gps_current_location);
+        pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
+        wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, DEBUG_TAG);
         activityPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         mapView = (MapView) findViewById(R.id.mapView);
@@ -74,6 +78,10 @@ public class GetGPSCurrentLocation extends MapActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        // Activate wakelock
+        wl.acquire();
+
         overlay.enableMyLocation();
 
         // Read preferences for compass
@@ -94,6 +102,9 @@ public class GetGPSCurrentLocation extends MapActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        // Release wakelock
+        wl.release();
+
         if(overlay.isMyLocationEnabled())
             overlay.disableMyLocation();
         if(overlay.isCompassEnabled())
