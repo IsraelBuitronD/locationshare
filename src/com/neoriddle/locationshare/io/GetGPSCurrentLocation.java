@@ -27,6 +27,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
@@ -41,7 +43,6 @@ import android.widget.Toast;
 
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
-import com.google.android.maps.MyLocationOverlay;
 import com.neoriddle.locationshare.R;
 import com.neoriddle.locationshare.security.GenericHttpsClient;
 import com.neoriddle.locationshare.utils.AndroidUtils;
@@ -57,22 +58,45 @@ public class GetGPSCurrentLocation extends MapActivity {
     private static final int ABOUT_DIALOG_ID = 0x02;
 
     private MapView mapView;
-    private MyLocationOverlay overlay;
+    //private MyLocationOverlay overlay;
     private SharedPreferences activityPreferences;
     private PowerManager pm;
     private PowerManager.WakeLock wl;
+
+    private LocationManager locMan;
+    private LocationProvider gpsProv;
+    private LocationProvider cellProv;
+    private GenericLocationListener listener;
+    private final long minTime = 30000;
+    private final long minDistance = 30;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.get_gps_current_location);
+
+        // Wakelock
         pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, DEBUG_TAG);
+
+        // Preferences
         activityPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        // Location
+        Log.d(DEBUG_TAG, "Getting location service");
+        locMan = (LocationManager)getSystemService(LOCATION_SERVICE);
+        Log.d(DEBUG_TAG, "Getting GPS provider");
+        gpsProv = locMan.getProvider(LocationManager.GPS_PROVIDER);
+        Log.d(DEBUG_TAG, "Getting network provider");
+        cellProv = locMan.getProvider(LocationManager.NETWORK_PROVIDER);
+        Log.d(DEBUG_TAG, "Creating location listener");
+        listener = new GenericLocationListener(this);
+
+
+        // MapView and overlays
         mapView = (MapView) findViewById(R.id.mapView);
-        overlay = new MyLocationOverlay(this, mapView);
-        mapView.getOverlays().add(overlay);
+        //overlay = new MyLocationOverlay(this, mapView);
+        //mapView.getOverlays().add(overlay);
     }
 
     @Override
@@ -82,13 +106,20 @@ public class GetGPSCurrentLocation extends MapActivity {
         // Activate wakelock
         wl.acquire();
 
-        overlay.enableMyLocation();
+//        overlay.enableMyLocation();
+//
+//        // Read preferences for compass
+//        if(activityPreferences.getBoolean("compass_control", false))
+//            overlay.enableCompass();
+//        else
+//            overlay.disableCompass();
 
-        // Read preferences for compass
-        if(activityPreferences.getBoolean("compass_control", false))
-            overlay.enableCompass();
-        else
-            overlay.disableCompass();
+        // Request location updates
+        Toast.makeText(this, "Requesting location updates", Toast.LENGTH_SHORT).show();
+        Log.d(DEBUG_TAG, "Requesting location updates from GPS provider");
+        locMan.requestLocationUpdates(gpsProv.getName(), minTime, minDistance, listener);
+        Log.d(DEBUG_TAG, "Requesting location updates from network provider");
+        locMan.requestLocationUpdates(cellProv.getName(), minTime, minDistance, listener);
 
         // Read preferences for satellite, traffic and streetview overlay
         mapView.setSatellite(activityPreferences.getBoolean("satellite_overlay", false));
@@ -105,10 +136,13 @@ public class GetGPSCurrentLocation extends MapActivity {
         // Release wakelock
         wl.release();
 
-        if(overlay.isMyLocationEnabled())
-            overlay.disableMyLocation();
-        if(overlay.isCompassEnabled())
-            overlay.disableCompass();
+//        if(overlay.isMyLocationEnabled())
+//            overlay.disableMyLocation();
+//        if(overlay.isCompassEnabled())
+//            overlay.disableCompass();
+
+        Toast.makeText(this, "Stopping location updates", Toast.LENGTH_SHORT).show();
+        locMan.removeUpdates(listener);
     }
 
     @Override
@@ -125,7 +159,7 @@ public class GetGPSCurrentLocation extends MapActivity {
             // TODO Implement refreshing location
             return true;
         case R.id.lastLocationDetailMenu:
-            if (overlay.getLastFix() == null)
+            if(listener.getBestFix() == null)
                 Toast.makeText(this, R.string.last_location_info_not_available, Toast.LENGTH_SHORT).show();
             else
                 showDialog(LAST_LOCATION_DETAIL_DIALOG_ID);
@@ -192,7 +226,8 @@ public class GetGPSCurrentLocation extends MapActivity {
     protected void onPrepareDialog(int id, Dialog dialog) {
         switch(id) {
         case LAST_LOCATION_DETAIL_DIALOG_ID:
-            final Location lastLocation = overlay.getLastFix();
+//            final Location lastLocation = overlay.getLastFix();
+            final Location lastLocation = listener.getBestFix();
 
             final TextView latitudeText = (TextView)dialog.findViewById(R.id.latitude_value);
             latitudeText.setText(Double.toString(lastLocation.getLatitude()));
@@ -233,7 +268,8 @@ public class GetGPSCurrentLocation extends MapActivity {
     }
 
     protected void sendBySms() {
-        final Location lastLocation = overlay.getLastFix();
+        //final Location lastLocation = overlay.getLastFix();
+        final Location lastLocation = listener.getBestFix();
 
         if (lastLocation == null)
             Toast.makeText(this, R.string.last_location_info_not_available, Toast.LENGTH_SHORT).show();
@@ -265,7 +301,8 @@ public class GetGPSCurrentLocation extends MapActivity {
         final HttpPost httppost = new HttpPost(httpsResource);
 
         Log.d(DEBUG_TAG, "Adding POST parameters");
-        final Location lastLocation = overlay.getLastFix();
+//        final Location lastLocation = overlay.getLastFix();
+        final Location lastLocation = listener.getBestFix();
         final List<NameValuePair> parameters = new ArrayList<NameValuePair>(2);
 
         parameters.add(new BasicNameValuePair("lat", ""+lastLocation.getLatitude() ));
@@ -285,7 +322,8 @@ public class GetGPSCurrentLocation extends MapActivity {
     }
 
     protected void sendByEmail() {
-        final Location lastLocation = overlay.getLastFix();
+//        final Location lastLocation = overlay.getLastFix();
+        final Location lastLocation = listener.getBestFix();
         if (lastLocation == null)
             Toast.makeText(this, R.string.last_location_info_not_available, Toast.LENGTH_SHORT).show();
         else {
