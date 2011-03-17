@@ -26,6 +26,11 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationManager;
 import android.location.LocationProvider;
@@ -41,8 +46,11 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
+import com.google.android.maps.Projection;
 import com.neoriddle.locationshare.R;
 import com.neoriddle.locationshare.security.GenericHttpsClient;
 import com.neoriddle.locationshare.utils.AndroidUtils;
@@ -97,6 +105,13 @@ public class GetGPSCurrentLocation extends MapActivity {
         mapView = (MapView) findViewById(R.id.mapView);
         //overlay = new MyLocationOverlay(this, mapView);
         //mapView.getOverlays().add(overlay);
+        final LastLocationOverlay overlay = new LastLocationOverlay(this);
+        mapView.getOverlays().add(overlay);
+//        final Location lastGPSLocation = locMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//        mapView.getController().animateTo(getGeoPoint(lastGPSLocation));
+        final Location lastNetworkLocation = locMan.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        mapView.getController().animateTo(getGeoPoint(lastNetworkLocation));
+
     }
 
     @Override
@@ -357,6 +372,63 @@ public class GetGPSCurrentLocation extends MapActivity {
                         lastLocation.getAccuracy(),
                         lastLocation.getSpeed(),
                         new SimpleDateFormat("yyyyMMdd_HHmmss_ZZZZ").format(new Date(lastLocation.getTime()))));
+    }
+
+    private class LastLocationOverlay extends Overlay {
+
+        private final Context context;
+
+        public LastLocationOverlay(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public boolean draw(Canvas canvas, MapView mapView, boolean shadow, long when) {
+            super.draw(canvas, mapView, shadow);
+
+            if(listener.getBestFix()!=null) {
+                final Projection projection = mapView.getProjection();
+                final Location location = listener.getBestFix();
+                final GeoPoint point = getGeoPoint(location);
+
+                // Draw pin
+                final Paint pinPaint = new Paint();
+                final Point projectedCenter = new Point();
+                projection.toPixels(point, projectedCenter);
+
+                pinPaint.setStrokeWidth(1);
+                pinPaint.setARGB(255, 255, 255, 255);
+                pinPaint.setStyle(Paint.Style.STROKE);
+
+                final Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.map_pin_add);
+                //canvas.drawBitmap(bmp, projectedCenter.x, projectedCenter.y, pinPaint);
+                canvas.drawBitmap(bmp, projectedCenter.x - bmp.getWidth()/2, projectedCenter.y - bmp.getHeight(),pinPaint);
+
+
+                // Draw accuracy circle
+                final int radius = (int)projection.metersToEquatorPixels(location.getAccuracy());
+
+                final Paint accuracyPaint = new Paint();
+                accuracyPaint.setAntiAlias(true);
+                accuracyPaint.setStrokeWidth(2.0f);
+                accuracyPaint.setColor(0xFFFF6666); // AARRGGBB
+                accuracyPaint.setStyle(Paint.Style.STROKE);
+                canvas.drawCircle(projectedCenter.x, projectedCenter.y, radius, accuracyPaint);
+
+                accuracyPaint.setColor(0x18FF6666); // AARRGGBB
+                accuracyPaint.setStyle(Paint.Style.FILL);
+                canvas.drawCircle(projectedCenter.x, projectedCenter.y, radius, accuracyPaint);
+
+            }
+            return true;
+        }
+
+    }
+
+    public static GeoPoint getGeoPoint(Location l) {
+        return new GeoPoint(
+                (int)(l.getLatitude()*1E6),
+                (int)(l.getLongitude()*1E6));
     }
 
 }

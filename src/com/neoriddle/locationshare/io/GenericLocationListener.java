@@ -31,14 +31,16 @@ public class GenericLocationListener implements LocationListener {
     }
 
     public void onLocationChanged(Location location) {
-        Toast.makeText(context, "New location found", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "New location found from " + location.getProvider(), Toast.LENGTH_SHORT).show();
 
         Log.d(DEBUG_TAG, "Creating db adapter");
         final LocationsDBAdapter adapter = new LocationsDBAdapter(context);
         Log.d(DEBUG_TAG, "Opening connection");
         adapter.open();
-        Log.d(DEBUG_TAG, "Inserting location data");
-        adapter.insertLocation(location);
+        Log.d(DEBUG_TAG, "Attemping to insert location data");
+        final long id = adapter.insertLocation(location);
+        if(id > 0)
+            Log.d(DEBUG_TAG, "Inserted location at " + id);
         Log.d(DEBUG_TAG, "Closing connection");
         adapter.close();
 
@@ -95,7 +97,7 @@ public class GenericLocationListener implements LocationListener {
      * @param location  The new Location that you want to evaluate
      * @param currentBestLocation  The current Location fix, to which you want to compare the new one
      */
-    private boolean isBetterLocation(Location location, Location currentBestLocation) {
+    public boolean isBetterLocation(Location location, Location currentBestLocation) {
         if (currentBestLocation == null)
            // A new location is always better than no location
            return true;
@@ -136,7 +138,7 @@ public class GenericLocationListener implements LocationListener {
     /**
      * Checks whether two providers are the same
      */
-    private boolean isSameProvider(String provider1, String provider2) {
+    public boolean isSameProvider(String provider1, String provider2) {
         return provider1 == null ? provider2 == null : provider1.equals(provider2);
     }
 
