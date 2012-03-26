@@ -58,9 +58,9 @@ import com.neoriddle.locationshare.utils.AndroidUtils;
 public class GetGPSCurrentLocation extends MapActivity {
 
     /**
-     * Tag class por debugging.
+     * Tag class for debugging.
      */
-    private static final String DEBUG_TAG = "GetGPSCurrentLocation";
+    private static final String DEBUG_TAG = "LocationShare";
 
     private static final int LAST_LOCATION_DETAIL_DIALOG_ID = 0x01;
     private static final int ABOUT_DIALOG_ID = 0x02;

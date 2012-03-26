@@ -20,7 +20,10 @@ public class LocationsDBAdapter {
     public static final String KEY_CREATED_AT = "created_at";
     public static final String KEY_UPDATED_AT = "updated_at";
 
-    private static final String DEBUG_TAG = "LocationsDBAdapter";
+	/**
+     * Tag class for debugging.
+     */
+    private static final String DEBUG_TAG = "LocationShare";
 
     private static final String DATABASE_TABLE = "locations";
 
