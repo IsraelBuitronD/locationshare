@@ -31,6 +31,8 @@
     <string name="default_subject_for_email_alert">LocationShare Alert</string>
     <string name="default_sms_emergency_number">5538274486</string>
 
+    <string name="not_valid_sms_number_msg">\'%s\' is not a valid SMS number</string>
+
     <!-- About dialog  -->
     <string name="close">Close</string>
     <string name="send_me_bugs_msg">If you find some error, or you have comments or suggestions, please send me an email.</string>
