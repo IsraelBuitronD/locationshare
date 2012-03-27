@@ -13,10 +13,11 @@ import android.content.Context;
 import android.util.Log;
 
 public class GenericHttpsClient extends DefaultHttpClient {
-    /**
-     * Tag class por debugging.
+
+	/**
+     * Tag class for debugging.
      */
-    private static final String DEBUG_TAG = "GenericHttpsClient";
+    private static final String DEBUG_TAG = "LocationShare";
 
     private final Context context;
 

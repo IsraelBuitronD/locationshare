@@ -7,7 +7,10 @@ import javax.net.ssl.X509TrustManager;
 
 public class NaiveTrustManager implements X509TrustManager {
 
-    private final String DEBUG_TAG = "NaiveTrustManager";
+	/**
+     * Tag class for debugging.
+     */
+    private static final String DEBUG_TAG = "LocationShare";
 
     private String certKey;
     private static final X509Certificate[] a = new X509Certificate[] {};

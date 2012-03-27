@@ -12,7 +12,10 @@ import com.neoriddle.locationshare.db.LocationsDBAdapter;
 
 public class GenericLocationListener implements LocationListener {
 
-    private static final String DEBUG_TAG = "GenericLocationListener";
+	/**
+     * Tag class for debugging.
+     */
+    private static final String DEBUG_TAG = "LocationShare";
     private final Context context;
     private Location bestFix;
     private Location lastFix;

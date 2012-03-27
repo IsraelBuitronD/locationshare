@@ -12,6 +12,11 @@ import android.widget.Toast;
 
 public class SendAlert extends Activity {
 
+	/**
+     * Tag class for debugging.
+     */
+    private static final String DEBUG_TAG = "LocationShare";
+
 	private static final String SENT_SIGNAL = "SENT";
 	private static final String DELIVERED_SIGNAL = "DELIVERED";
 

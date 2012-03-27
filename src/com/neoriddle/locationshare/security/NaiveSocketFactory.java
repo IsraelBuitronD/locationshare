@@ -24,7 +24,10 @@ import android.util.Log;
 public class NaiveSocketFactory
     implements SocketFactory, LayeredSocketFactory {
 
-    private final String DEBUG_TAG = "NaiveSocketFactory";
+	/**
+     * Tag class for debugging.
+     */
+    private static final String DEBUG_TAG = "LocationShare";
 
     private String certKey;
     private SSLContext sslContext;
