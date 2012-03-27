@@ -283,8 +283,8 @@ public class GetGPSCurrentLocation extends MapActivity {
     }
 
     protected void sendBySms() {
-        //final Location lastLocation = overlay.getLastFix();
-        final Location lastLocation = listener.getBestFix();
+        final Location lastLocation = listener.getLastFix();
+        //final Location lastLocation = listener.getBestFix();
 
         if (lastLocation == null)
             Toast.makeText(this, R.string.last_location_info_not_available, Toast.LENGTH_SHORT).show();
@@ -299,10 +299,18 @@ public class GetGPSCurrentLocation extends MapActivity {
                 startActivity(sendIntent);
             } else {
                 final String smsNumber = activityPreferences.getString("sms_emergency_number", "");
-                final SmsManager manager = SmsManager.getDefault();
-                final PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, GetGPSCurrentLocation.class), 0);
-                // TODO Check if send sms works (COST NEEDED)
-                manager.sendTextMessage(smsNumber, null, smsMessage, pi, null);
+
+                // Validate SMS number
+                if(AndroidUtils.isValidSMSnumber(smsNumber)) {
+                    final SmsManager manager = SmsManager.getDefault();
+                    final PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, GetGPSCurrentLocation.class), 0);
+                    // TODO Check if send sms works (COST NEEDED)
+                    manager.sendTextMessage(smsNumber, null, smsMessage, pi, null);
+                } else {
+                    Toast.makeText(this,
+                            getString(R.string.not_valid_sms_number_msg, smsNumber),
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
