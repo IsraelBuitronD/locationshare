@@ -30,6 +30,8 @@
                 android:summary="Edit number to send emergency alerts"
                 android:title="SMS emergency number"
                 android:defaultValue="@string/default_sms_emergency_number"
+                android:inputType="phone"
+                android:maxLength="10"
                 android:key="sms_emergency_number" />
             <CheckBoxPreference 
                 android:key="ask_for_sms_number"
