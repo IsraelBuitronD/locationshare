@@ -37,4 +37,14 @@ public class AndroidUtils {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Checks if a string contains a valid SMS number.
+     *
+     * @param number String to validate
+     * @return <code>true</code> if valid, otherwise <code>false</code>.
+     */
+    public static boolean isValidSMSnumber(String number) {
+        return number.matches("\\d{7,10}");
+    }
 }
