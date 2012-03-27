@@ -45,6 +45,8 @@
             android:title="Preferences for Email Alerts">
             <EditTextPreference
                 android:summary="Edit email address to send emergency alerts"
+                android:inputType="textEmailAddress"
+                android:maxLength="50"
                 android:title="Email emergency address"
                 android:key="email_emergency_address" />
             <CheckBoxPreference 

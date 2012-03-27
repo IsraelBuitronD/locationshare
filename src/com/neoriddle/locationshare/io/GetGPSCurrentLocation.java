@@ -345,8 +345,9 @@ public class GetGPSCurrentLocation extends MapActivity {
     }
 
     protected void sendByEmail() {
-//        final Location lastLocation = overlay.getLastFix();
-        final Location lastLocation = listener.getBestFix();
+        final Location lastLocation = listener.getLastFix();
+        //final Location lastLocation = listener.getBestFix();
+
         if (lastLocation == null)
             Toast.makeText(this, R.string.last_location_info_not_available, Toast.LENGTH_SHORT).show();
         else {
@@ -364,10 +365,17 @@ public class GetGPSCurrentLocation extends MapActivity {
                 emailIntent.putExtra(Intent.EXTRA_TEXT, prepateEmailMessage(activityPreferences, lastLocation));
 
                 startActivity(emailIntent);
-            } else
-                Toast.makeText(this, "TODO: Send email to deafult email address", Toast.LENGTH_SHORT).show();
-                // TODO Send email to deafult email address
+            } else {
+                final String emailAddress = activityPreferences.getString("email_emergency_address", "");
 
+                if(AndroidUtils.isValidEmailAddress(emailAddress)) {
+                    // TODO Send email to default email address
+                } else {
+                    Toast.makeText(this,
+                            getString(R.string.not_valid_email_address_msg, emailAddress),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 
